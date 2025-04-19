@@ -1,0 +1,8 @@
+devices:
+  - name: "mumu_1"
+    port: 7555
+    resolution: [1920, 1080]
+    click_points:
+      search_box: [100, 200]
+      cart_button: [300, 400]
+      checkout_button: [500, 600]

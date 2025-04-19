@@ -1,0 +1,22 @@
+# config.yaml
+time_windows:
+  - start_time: "10:00:00"
+    end_time: "10:30:00"
+    interval: 1
+  - start_time: "14:00:00"
+    end_time: "14:30:00"
+    interval: 1
+
+search:
+  keywords: ["测试商品"]
+  timeout: 5
+
+operation:
+  click_interval: 0.5
+  swipe_duration: 0.3
+  retry_times: 3
+
+logging:
+  level: "INFO"
+  rotation: "1 day"
+  retention: "7 days"
