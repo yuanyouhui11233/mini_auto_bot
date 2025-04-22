@@ -1,0 +1,32 @@
+{
+  "devices": {
+    "device1": {
+      "connect_info": "emulator-5554",
+      "miniprogram": {
+        "name": "胖东来",
+        "package": "com.tencent.mm",
+        "search_timeout": 5
+      }
+    },
+    "device2": {
+      "connect_info": "emulator-5556",
+      "miniprogram": {
+        "name": "胖东来",
+        "package": "com.tencent.mm",
+        "search_timeout": 5
+      }
+    }
+  },
+  "default_miniprogram": {
+    "name": "胖东来",
+    "package": "com.tencent.mm",
+    "search_timeout": 5
+  },
+  "options": {
+    "parallel_execution": true,
+    "auto_discovery": true,
+    "retry_count": 3,
+    "retry_interval": 5,
+    "screenshot_on_error": true
+  }
+}
