@@ -8,13 +8,19 @@ time_windows:
     interval: 1
 
 search:
-  keywords: ["测试商品"]
+  keywords: ["啤酒"]
   timeout: 5
 
 operation:
   click_interval: 0.5
   swipe_duration: 0.3
   retry_times: 3
+
+miniprogram:
+  name: "胖东来" # 小程序名称
+  package: "com.tencent.mm" # 微信包名
+  launch_timeout: 10 # 启动超时时间（秒）
+  search_timeout: 5 # 搜索超时时间（秒）
 
 logging:
   level: "INFO"
