@@ -1,6 +1,7 @@
 devices:
-  - name: "mumu_1"
-    port: 7555
+  - name: "leidian_1"
+    connect_info: emulator-5554
+    port: 5554
     resolution: [1920, 1080]
     click_points:
       search_box: [100, 200]

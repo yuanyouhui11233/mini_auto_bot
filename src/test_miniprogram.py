@@ -10,12 +10,12 @@ def test_launch_miniprogram():
     logger = Logger(logging_config)
     
     # 获取设备配置
-    device_config = config_manager.get_device_by_name("mumu_1")
+    device_config = config_manager.get_device_by_name("leidian_1")
     
     try:
         # 连接设备
         logger.info(f"尝试连接设备: {device_config['name']}")
-        device = u2.connect(f"127.0.0.1:{device_config['port']}")
+        device = u2.connect(f"emulator-{device_config['port']}")
         
         # 创建小程序实例
         miniprogram = MiniProgram(device, config_manager.config, logger)

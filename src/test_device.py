@@ -46,9 +46,9 @@ def test_device_connection():
     except Exception as e:
         logger.error(f"连接设备失败: {str(e)}")
         logger.error("请确保：")
-        logger.error("1. MuMu模拟器已启动")
+        logger.error("1. 雷电模拟器已启动")
         logger.error("2. 模拟器设置中的USB调试已开启")
-        logger.error("3. 模拟器ADB端口（默认7555）未被占用")
+        logger.error("3. 模拟器ADB端口（默认5554）未被占用")
         return False
 
 if __name__ == "__main__":
