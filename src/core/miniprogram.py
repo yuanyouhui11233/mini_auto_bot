@@ -1,5 +1,5 @@
 import time
-from typing import Optional
+from typing import Optional, Tuple
 import uiautomator2 as u2
 from utils.logger import Logger
 import numpy as np
@@ -422,8 +422,7 @@ class MiniProgram:
             self.device.clear_text()
             time.sleep(0.5)
             
-            # 直接发送输入，不使用其他方法
-            self.logger.info("直接发送输入关键词")
+            # 发送输入关键词
             self.device.send_keys(keyword)
             time.sleep(1)
             
@@ -444,8 +443,9 @@ class MiniProgram:
         self.logger.info("尝试提交搜索请求...")
         try:
 
+            self.device.press("enter")
+            self.device.press("search")
             # 调用回车键提交搜索
-
             # 方法2: 通过屏幕坐标点击搜索按钮（通常在屏幕右侧）
             # width, height = self.device.window_size()
             
@@ -476,4 +476,77 @@ class MiniProgram:
             
         except Exception as e:
             self.logger.error(f"提交搜索请求时发生错误: {str(e)}")
+            return False
+
+    def _find_element_by_template(self, template_path: str, threshold: float = 0.8) -> Optional[Tuple[int, int]]:
+        """使用模板匹配查找界面元素位置
+        
+        Args:
+            template_path: 模板图片路径
+            threshold: 匹配阈值，默认0.8
+            
+        Returns:
+            Optional[Tuple[int, int]]: 找到的元素中心坐标，未找到返回None
+        """
+        try:
+            # 获取当前屏幕截图
+            screen_path = self._dump_hierarchy()
+            if not screen_path:
+                self.logger.error("无法获取屏幕截图")
+                return None
+            
+            # 读取屏幕截图和模板图片
+            screen = cv2.imread(screen_path)
+            template = cv2.imread(template_path)
+            
+            if screen is None or template is None:
+                self.logger.error("无法读取图片")
+                return None
+            
+            # 进行模板匹配
+            result = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+            
+            self.logger.info(f"模板匹配最大相似度: {max_val}")
+            
+            # 如果相似度超过阈值，认为找到了元素
+            if max_val >= threshold:
+                # 计算元素中心点坐标
+                h, w = template.shape[:2]
+                center_x = max_loc[0] + w // 2
+                center_y = max_loc[1] + h // 2
+                
+                self.logger.info(f"找到匹配元素，中心坐标: ({center_x}, {center_y})")
+                return center_x, center_y
+            
+            self.logger.info("未找到匹配元素")
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"模板匹配过程中发生错误: {str(e)}")
+            return None
+
+    def click_element_by_template(self, template_path: str, threshold: float = 0.8) -> bool:
+        """通过模板图片点击界面元素
+        
+        Args:
+            template_path: 模板图片路径
+            threshold: 匹配阈值，默认0.8
+            
+        Returns:
+            bool: 是否成功点击元素
+        """
+        try:
+            # 查找元素位置
+            element_pos = self._find_element_by_template(template_path, threshold)
+            if element_pos is None:
+                return False
+            
+            # 点击元素
+            self.device.click(element_pos[0], element_pos[1])
+            self.logger.info(f"已点击坐标: ({element_pos[0]}, {element_pos[1]})")
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"点击元素时发生错误: {str(e)}")
             return False
