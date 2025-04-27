@@ -20,7 +20,8 @@ def TestSearch():
         # 创建小程序实例
         miniprogram = MiniProgram(device, config_manager.config, logger)
         # 调用小程序的输入关键词方法
-        miniprogram.search_in_miniprogram("啤酒")
+        # 聚焦输入框
+        miniprogram._focus_on_search_box_tag()
 
     except Exception as e:
         logger.error(f"测试过程中发生错误: {str(e)}")

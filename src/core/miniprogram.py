@@ -68,7 +68,6 @@ class MiniProgram:
             
             # 保存截图
             self.device.screenshot(screenshot_path)
-            self.device.screenshot().crop((270, 0, 540, 160)).save('test.png')
             self.logger.info(f"已保存屏幕截图到: {screenshot_path}")
             
             return screenshot_path
@@ -370,7 +369,7 @@ class MiniProgram:
         except Exception as e:
             self.logger.error(f"搜索过程中发生错误: {str(e)}")
             return False
-            
+
     def _click_search_box(self) -> bool:
         """在小程序首页找到并点击搜索框
         
@@ -443,8 +442,6 @@ class MiniProgram:
         self.logger.info("尝试提交搜索请求...")
         try:
 
-            self.device.press("enter")
-            self.device.press("search")
             # 调用回车键提交搜索
             # 方法2: 通过屏幕坐标点击搜索按钮（通常在屏幕右侧）
             # width, height = self.device.window_size()
@@ -477,10 +474,45 @@ class MiniProgram:
         except Exception as e:
             self.logger.error(f"提交搜索请求时发生错误: {str(e)}")
             return False
+    
+    def _focus_on_search_box_tag(self) -> bool:
+        """尝试聚焦搜索框 出现历史搜索记录，点击首个标签进行搜索
+        输入框位置:
+        x 100 - 140 在placeholder '搜索您想要购买的商品'的'您想'位置
+        y 130 在输入框中间
+        
+        历史搜索记录内首个标签位置:
+        x 50
+        y 230
+        Returns:
+            bool: 是否成功聚焦搜索框
+        """
+        self.logger.info("尝试聚焦搜索框...")
+        try:
+            # 获取屏幕尺寸
+            width,height = self.device.window_size()
+            # 计算底部区域的中心点 y 130
+            bottom_center_x = width / 2 # 270.0 为屏幕宽度的一半
+            bottom_center_y = 130  # 130
+            # 聚焦输入框
+            self.logger.info(f"点击输入框区域: ({bottom_center_x}, {bottom_center_y})")
+            self.device.click(bottom_center_x, bottom_center_y)
+            self.logger.info(f"点击首个标签位置: x 50 y 230")
+            time.sleep(1)
+            self.device.click(50, 230)
+            # crop参数 x1 左 y1 上 x2 右 y2 下
+            # self.device.screenshot().crop((50, 200, 100, 250)).save('pijiu.png')
+        except Exception as e:
+            self.logger.error(f"聚焦输入框 - 点击历史搜索tag出错: {str(e)}")
+            return False
+        return True
 
     def _find_element_by_template(self, template_path: str, threshold: float = 0.8) -> Optional[Tuple[int, int]]:
-        """使用模板匹配查找界面元素位置
+        """使用模板图片匹配搜索结果图片
         
+        需求：
+        1. 模板图片是商品搜索结果页，由于该商品未售罄/未售罄状态，需要匹配的图片是未售罄状态的商品图片
+
         Args:
             template_path: 模板图片路径
             threshold: 匹配阈值，默认0.8
@@ -525,6 +557,7 @@ class MiniProgram:
         except Exception as e:
             self.logger.error(f"模板匹配过程中发生错误: {str(e)}")
             return None
+
 
     def click_element_by_template(self, template_path: str, threshold: float = 0.8) -> bool:
         """通过模板图片点击界面元素
