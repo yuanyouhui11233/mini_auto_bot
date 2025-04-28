@@ -507,7 +507,7 @@ class MiniProgram:
             return False
         return True
 
-    def _find_element_by_template(self, template_path: str, threshold: float = 0.8) -> Optional[Tuple[int, int]]:
+    def _find_element_by_template(self, template_path: str, threshold: float = 0.8) -> bool:
         """使用模板图片匹配搜索结果图片
         
         需求：
@@ -515,10 +515,10 @@ class MiniProgram:
 
         Args:
             template_path: 模板图片路径
-            threshold: 匹配阈值，默认0.8
+            threshold: 匹配阈值 默认0.8
             
         Returns:
-            Optional[Tuple[int, int]]: 找到的元素中心坐标，未找到返回None
+            bool: 图片对比结果
         """
         try:
             # 获取当前屏幕截图
@@ -535,28 +535,11 @@ class MiniProgram:
                 self.logger.error("无法读取图片")
                 return None
             
-            # 进行模板匹配
-            result = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
-            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
-            
-            self.logger.info(f"模板匹配最大相似度: {max_val}")
-            
-            # 如果相似度超过阈值，认为找到了元素
-            if max_val >= threshold:
-                # 计算元素中心点坐标
-                h, w = template.shape[:2]
-                center_x = max_loc[0] + w // 2
-                center_y = max_loc[1] + h // 2
-                
-                self.logger.info(f"找到匹配元素，中心坐标: ({center_x}, {center_y})")
-                return center_x, center_y
-            
-            self.logger.info("未找到匹配元素")
-            return None
+            return True
             
         except Exception as e:
             self.logger.error(f"模板匹配过程中发生错误: {str(e)}")
-            return None
+            return False
 
 
     def click_element_by_template(self, template_path: str, threshold: float = 0.8) -> bool:
