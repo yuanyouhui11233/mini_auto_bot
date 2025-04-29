@@ -441,28 +441,6 @@ class MiniProgram:
         """
         self.logger.info("尝试提交搜索请求...")
         try:
-
-            # 调用回车键提交搜索
-            # 方法2: 通过屏幕坐标点击搜索按钮（通常在屏幕右侧）
-            # width, height = self.device.window_size()
-            
-            # 获取当前屏幕截图
-            # screenshot_path = self._dump_hierarchy()
-            
-            # 尝试找到搜索按钮的几个可能位置
-            # 1. 右上角可能的搜索按钮位置（相对坐标）
-            # search_positions = [
-            #     (width * 0.9, 160),  # 右上方
-            # ]
-            
-            # 记录当前界面以便后续检查变化
-            # self.logger.info("尝试点击可能的搜索按钮位置...")
-            
-            # for i, pos in enumerate(search_positions):
-            #     self.logger.info(f"尝试点击位置{i+1}: ({pos[0]}, {pos[1]})")
-            #     self.device.click(pos[0], pos[1])
-            #     time.sleep(1.5)
-
             # 保存并检查搜索后的截图
             after_search_path = self._dump_hierarchy()
             self.logger.info(f"搜索提交后截图保存至: {after_search_path}")
@@ -506,63 +484,3 @@ class MiniProgram:
             self.logger.error(f"聚焦输入框 - 点击历史搜索tag出错: {str(e)}")
             return False
         return True
-
-    def _find_element_by_template(self, template_path: str, threshold: float = 0.8) -> bool:
-        """使用模板图片匹配搜索结果图片
-        
-        需求：
-        1. 模板图片是商品搜索结果页，由于该商品未售罄/未售罄状态，需要匹配的图片是未售罄状态的商品图片
-
-        Args:
-            template_path: 模板图片路径
-            threshold: 匹配阈值 默认0.8
-            
-        Returns:
-            bool: 图片对比结果
-        """
-        try:
-            # 获取当前屏幕截图
-            screen_path = self._dump_hierarchy()
-            if not screen_path:
-                self.logger.error("无法获取屏幕截图")
-                return None
-            
-            # 读取屏幕截图和模板图片
-            screen = cv2.imread(screen_path)
-            template = cv2.imread(template_path)
-            
-            if screen is None or template is None:
-                self.logger.error("无法读取图片")
-                return None
-            
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"模板匹配过程中发生错误: {str(e)}")
-            return False
-
-
-    def click_element_by_template(self, template_path: str, threshold: float = 0.8) -> bool:
-        """通过模板图片点击界面元素
-        
-        Args:
-            template_path: 模板图片路径
-            threshold: 匹配阈值，默认0.8
-            
-        Returns:
-            bool: 是否成功点击元素
-        """
-        try:
-            # 查找元素位置
-            element_pos = self._find_element_by_template(template_path, threshold)
-            if element_pos is None:
-                return False
-            
-            # 点击元素
-            self.device.click(element_pos[0], element_pos[1])
-            self.logger.info(f"已点击坐标: ({element_pos[0]}, {element_pos[1]})")
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"点击元素时发生错误: {str(e)}")
-            return False
